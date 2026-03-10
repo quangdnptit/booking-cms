@@ -1,5 +1,6 @@
 package com.demo.booking_cms.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,7 @@ public class User {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
+    @JsonIgnore
     @Column(name = "password_hash", nullable = false, columnDefinition = "TEXT")
     private String passwordHash;
 
