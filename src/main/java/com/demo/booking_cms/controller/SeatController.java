@@ -4,7 +4,6 @@ import com.demo.booking_cms.dto.request.SeatRequest;
 import com.demo.booking_cms.dto.response.SeatResponse;
 import com.demo.booking_cms.service.SeatService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

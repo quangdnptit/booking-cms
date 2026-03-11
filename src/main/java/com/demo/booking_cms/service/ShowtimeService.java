@@ -29,18 +29,6 @@ public class ShowtimeService {
                 .collect(Collectors.toList());
     }
 
-    public List<ShowtimeResponse> findByMovieId(UUID movieId) {
-        return showtimeRepository.findByMovieId(movieId).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-    }
-
-    public List<ShowtimeResponse> findByRoomId(UUID roomId) {
-        return showtimeRepository.findByRoomId(roomId).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-    }
-
     public ShowtimeResponse findById(UUID id) {
         return showtimeRepository.findById(id)
                 .map(this::mapToResponse)
