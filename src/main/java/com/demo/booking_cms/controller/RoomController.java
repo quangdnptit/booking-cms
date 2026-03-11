@@ -36,24 +36,14 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody RoomRequest request) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(roomService.create(request));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+    public ResponseEntity<RoomResponse> create(@RequestBody RoomRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(roomService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody RoomRequest request) {
-        try {
-            RoomResponse response = roomService.update(id, request);
-            return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<RoomResponse> update(@PathVariable UUID id, @RequestBody RoomRequest request) {
+        RoomResponse response = roomService.update(id, request);
+        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

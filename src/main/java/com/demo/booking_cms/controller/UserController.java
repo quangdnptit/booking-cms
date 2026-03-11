@@ -31,14 +31,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody UserRequest request) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+    public ResponseEntity<UserResponse> create(@RequestBody UserRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
     }
 
     @PutMapping("/{id}")

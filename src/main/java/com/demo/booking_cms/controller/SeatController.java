@@ -36,22 +36,14 @@ public class SeatController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody SeatRequest request) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(seatService.create(request));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<SeatResponse> create(@RequestBody SeatRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(seatService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody SeatRequest request) {
-        try {
-            SeatResponse response = seatService.updateSeatType(id, request);
-            return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<SeatResponse> update(@PathVariable UUID id, @RequestBody SeatRequest request) {
+        SeatResponse response = seatService.updateSeatType(id, request);
+        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

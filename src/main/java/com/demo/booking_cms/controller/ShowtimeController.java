@@ -41,22 +41,14 @@ public class ShowtimeController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody ShowtimeRequest request) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(showtimeService.create(request));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<ShowtimeResponse> create(@RequestBody ShowtimeRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(showtimeService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody ShowtimeRequest request) {
-        try {
-            ShowtimeResponse response = showtimeService.update(id, request);
-            return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<ShowtimeResponse> update(@PathVariable UUID id, @RequestBody ShowtimeRequest request) {
+        ShowtimeResponse response = showtimeService.update(id, request);
+        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
