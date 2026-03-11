@@ -1,11 +1,8 @@
 package com.demo.booking_cms.controller;
 
-import com.demo.booking_cms.dto.RoomRequest;
-import com.demo.booking_cms.entity.Room;
-import com.demo.booking_cms.entity.Theater;
-import com.demo.booking_cms.repository.RoomRepository;
-import com.demo.booking_cms.repository.TheaterRepository;
-import com.demo.booking_cms.service.SeatGenerationService;
+import com.demo.booking_cms.dto.request.RoomRequest;
+import com.demo.booking_cms.dto.response.RoomResponse;
+import com.demo.booking_cms.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,73 +17,50 @@ import java.util.UUID;
 @CrossOrigin
 public class RoomController {
 
-    private final RoomRepository roomRepository;
-    private final TheaterRepository theaterRepository;
-    private final SeatGenerationService seatGenerationService;
+    private final RoomService roomService;
 
     @GetMapping
-    public List<Room> findAll() {
-        return roomRepository.findAll();
+    public ResponseEntity<List<RoomResponse>> findAll() {
+        return ResponseEntity.ok(roomService.findAll());
     }
 
     @GetMapping("/theater/{theaterId}")
-    public List<Room> findByTheater(@PathVariable UUID theaterId) {
-        return roomRepository.findByTheaterId(theaterId);
+    public ResponseEntity<List<RoomResponse>> findByTheater(@PathVariable UUID theaterId) {
+        return ResponseEntity.ok(roomService.findByTheater(theaterId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Room> findById(@PathVariable UUID id) {
-        return roomRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<RoomResponse> findById(@PathVariable UUID id) {
+        RoomResponse response = roomService.findById(id);
+        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Room> create(@RequestBody RoomRequest request) {
-        Theater theater = theaterRepository.findById(request.getTheaterId())
-                .orElse(null);
-        if (theater == null) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> create(@RequestBody RoomRequest request) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(roomService.create(request));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-        if (roomRepository.existsByTheaterIdAndName(request.getTheaterId(), request.getName())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-        Room room = Room.builder()
-                .theater(theater)
-                .name(request.getName())
-                .totalSeats(request.getTotalSeats())
-                .totalRows(request.getTotalRows())
-                .seatsPerRow(request.getSeatsPerRow())
-                .totalSeats(request.getTotalRows() * request.getSeatsPerRow())
-                .build();
-        Room roomEntity = roomRepository.save(room);
-        seatGenerationService.generateSeatsForRoom(roomEntity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(roomEntity);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Room> update(@PathVariable UUID id, @RequestBody RoomRequest request) {
-        Theater theater = theaterRepository.findById(request.getTheaterId())
-                .orElse(null);
-        if (theater == null) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody RoomRequest request) {
+        try {
+            RoomResponse response = roomService.update(id, request);
+            return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return roomRepository.findById(id)
-                .map(room -> {
-                    room.setTheater(theater);
-                    room.setName(request.getName());
-                    room.setTotalSeats(request.getTotalSeats());
-                    return ResponseEntity.ok(roomRepository.save(room));
-                })
-                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        if (!roomRepository.existsById(id)) {
+        if (!roomService.delete(id)) {
             return ResponseEntity.notFound().build();
         }
-        roomRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

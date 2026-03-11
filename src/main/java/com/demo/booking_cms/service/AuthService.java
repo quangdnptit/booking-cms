@@ -1,7 +1,7 @@
 package com.demo.booking_cms.service;
 
-import com.demo.booking_cms.dto.LoginRequest;
-import com.demo.booking_cms.dto.LoginResponse;
+import com.demo.booking_cms.dto.request.LoginRequest;
+import com.demo.booking_cms.dto.response.LoginResponse;
 import com.demo.booking_cms.entity.User;
 import com.demo.booking_cms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

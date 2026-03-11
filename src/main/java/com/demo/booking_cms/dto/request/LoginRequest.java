@@ -1,4 +1,4 @@
-package com.demo.booking_cms.dto;
+package com.demo.booking_cms.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

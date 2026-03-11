@@ -1,20 +1,20 @@
-package com.demo.booking_cms.dto;
+package com.demo.booking_cms.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RoomRequest {
-    private UUID theaterId;
+public class TheaterResponse {
+    private UUID id;
     private String name;
-    private Integer totalSeats;
-    private Integer totalRows;
-    private Integer seatsPerRow;
+    private String location;
+    private Instant createdAt;
 }

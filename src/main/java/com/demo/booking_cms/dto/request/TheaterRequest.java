@@ -1,4 +1,4 @@
-package com.demo.booking_cms.dto;
+package com.demo.booking_cms.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

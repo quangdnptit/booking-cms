@@ -1,8 +1,8 @@
 package com.demo.booking_cms.controller;
 
-import com.demo.booking_cms.dto.MovieRequest;
-import com.demo.booking_cms.entity.Movie;
-import com.demo.booking_cms.repository.MovieRepository;
+import com.demo.booking_cms.dto.request.MovieRequest;
+import com.demo.booking_cms.dto.response.MovieResponse;
+import com.demo.booking_cms.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,54 +17,35 @@ import java.util.UUID;
 @CrossOrigin
 public class MovieController {
 
-    private final MovieRepository movieRepository;
+    private final MovieService movieService;
 
     @GetMapping
-    public List<Movie> findAll() {
-        return movieRepository.findAll();
+    public ResponseEntity<List<MovieResponse>> findAll() {
+        return ResponseEntity.ok(movieService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Movie> findById(@PathVariable UUID id) {
-        return movieRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<MovieResponse> findById(@PathVariable UUID id) {
+        MovieResponse response = movieService.findById(id);
+        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Movie> create(@RequestBody MovieRequest request) {
-        Movie movie = Movie.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .durationMinutes(request.getDurationMinutes())
-                .genre(request.getGenre())
-                .ageRating(request.getAgeRating())
-                .posterUrl(request.getPosterUrl())
-                .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(movieRepository.save(movie));
+    public ResponseEntity<MovieResponse> create(@RequestBody MovieRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(movieService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Movie> update(@PathVariable UUID id, @RequestBody MovieRequest request) {
-        return movieRepository.findById(id)
-                .map(movie -> {
-                    movie.setTitle(request.getTitle());
-                    movie.setDescription(request.getDescription());
-                    movie.setDurationMinutes(request.getDurationMinutes());
-                    movie.setGenre(request.getGenre());
-                    movie.setAgeRating(request.getAgeRating());
-                    movie.setPosterUrl(request.getPosterUrl());
-                    return ResponseEntity.ok(movieRepository.save(movie));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<MovieResponse> update(@PathVariable UUID id, @RequestBody MovieRequest request) {
+        MovieResponse response = movieService.update(id, request);
+        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        if (!movieRepository.existsById(id)) {
+        if (!movieService.delete(id)) {
             return ResponseEntity.notFound().build();
         }
-        movieRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,4 +1,4 @@
-package com.demo.booking_cms.dto;
+package com.demo.booking_cms.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,10 +13,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ShowtimeRequest {
+public class ShowtimeResponse {
+    private UUID id;
     private UUID movieId;
+    private String movieTitle;
     private UUID roomId;
+    private String roomName;
     private Instant startTime;
     private Instant endTime;
+    private Instant publishedAt;
+    private Boolean isPublished;
     private BigDecimal basePrice;
+    private Instant createdAt;
 }

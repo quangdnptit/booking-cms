@@ -1,8 +1,8 @@
 package com.demo.booking_cms.controller;
 
-import com.demo.booking_cms.dto.TheaterRequest;
-import com.demo.booking_cms.entity.Theater;
-import com.demo.booking_cms.repository.TheaterRepository;
+import com.demo.booking_cms.dto.request.TheaterRequest;
+import com.demo.booking_cms.dto.response.TheaterResponse;
+import com.demo.booking_cms.service.TheaterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,46 +17,35 @@ import java.util.UUID;
 @CrossOrigin
 public class TheaterController {
 
-    private final TheaterRepository theaterRepository;
+    private final TheaterService theaterService;
 
     @GetMapping
-    public List<Theater> findAll() {
-        return theaterRepository.findAll();
+    public ResponseEntity<List<TheaterResponse>> findAll() {
+        return ResponseEntity.ok(theaterService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Theater> findById(@PathVariable UUID id) {
-        return theaterRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<TheaterResponse> findById(@PathVariable UUID id) {
+        TheaterResponse response = theaterService.findById(id);
+        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Theater> create(@RequestBody TheaterRequest request) {
-        Theater theater = Theater.builder()
-                .name(request.getName())
-                .location(request.getLocation())
-                .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(theaterRepository.save(theater));
+    public ResponseEntity<TheaterResponse> create(@RequestBody TheaterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(theaterService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Theater> update(@PathVariable UUID id, @RequestBody TheaterRequest request) {
-        return theaterRepository.findById(id)
-                .map(theater -> {
-                    theater.setName(request.getName());
-                    theater.setLocation(request.getLocation());
-                    return ResponseEntity.ok(theaterRepository.save(theater));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<TheaterResponse> update(@PathVariable UUID id, @RequestBody TheaterRequest request) {
+        TheaterResponse response = theaterService.update(id, request);
+        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        if (!theaterRepository.existsById(id)) {
+        if (!theaterService.delete(id)) {
             return ResponseEntity.notFound().build();
         }
-        theaterRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
