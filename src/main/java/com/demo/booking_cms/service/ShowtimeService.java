@@ -61,6 +61,7 @@ public class ShowtimeService {
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
                 .basePrice(request.getBasePrice())
+                .isPublished(request.isPublished())
                 .build();
                 
         return mapToResponse(showtimeRepository.save(showtime));

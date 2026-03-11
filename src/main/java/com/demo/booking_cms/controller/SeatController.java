@@ -35,11 +35,6 @@ public class SeatController {
         return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping
-    public ResponseEntity<SeatResponse> create(@RequestBody SeatRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(seatService.create(request));
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<SeatResponse> update(@PathVariable UUID id, @RequestBody SeatRequest request) {
         SeatResponse response = seatService.updateSeatType(id, request);

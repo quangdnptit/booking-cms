@@ -19,4 +19,5 @@ public class ShowtimeRequest {
     private Instant startTime;
     private Instant endTime;
     private BigDecimal basePrice;
+    private boolean isPublished;
 }

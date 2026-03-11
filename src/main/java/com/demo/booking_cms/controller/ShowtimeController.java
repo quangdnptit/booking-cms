@@ -24,16 +24,6 @@ public class ShowtimeController {
         return ResponseEntity.ok(showtimeService.findAll());
     }
 
-    @GetMapping("/movie/{movieId}")
-    public ResponseEntity<List<ShowtimeResponse>> findByMovie(@PathVariable UUID movieId) {
-        return ResponseEntity.ok(showtimeService.findByMovieId(movieId));
-    }
-
-    @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<ShowtimeResponse>> findByRoom(@PathVariable UUID roomId) {
-        return ResponseEntity.ok(showtimeService.findByRoomId(roomId));
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<ShowtimeResponse> findById(@PathVariable UUID id) {
         ShowtimeResponse response = showtimeService.findById(id);
