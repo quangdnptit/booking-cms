@@ -5,6 +5,7 @@ import com.demo.booking_cms.entity.Room;
 import com.demo.booking_cms.entity.Theater;
 import com.demo.booking_cms.repository.RoomRepository;
 import com.demo.booking_cms.repository.TheaterRepository;
+import com.demo.booking_cms.service.SeatGenerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class RoomController {
 
     private final RoomRepository roomRepository;
     private final TheaterRepository theaterRepository;
+    private final SeatGenerationService seatGenerationService;
 
     @GetMapping
     public List<Room> findAll() {
@@ -53,8 +55,13 @@ public class RoomController {
                 .theater(theater)
                 .name(request.getName())
                 .totalSeats(request.getTotalSeats())
+                .totalRows(request.getTotalRows())
+                .seatsPerRow(request.getSeatsPerRow())
+                .totalSeats(request.getTotalRows() * request.getSeatsPerRow())
                 .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(roomRepository.save(room));
+        Room roomEntity = roomRepository.save(room);
+        seatGenerationService.generateSeatsForRoom(roomEntity);
+        return ResponseEntity.status(HttpStatus.CREATED).body(roomEntity);
     }
 
     @PutMapping("/{id}")

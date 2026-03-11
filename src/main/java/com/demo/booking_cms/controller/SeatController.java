@@ -3,6 +3,7 @@ package com.demo.booking_cms.controller;
 import com.demo.booking_cms.dto.SeatRequest;
 import com.demo.booking_cms.entity.Room;
 import com.demo.booking_cms.entity.Seat;
+import com.demo.booking_cms.enums.SeatType;
 import com.demo.booking_cms.repository.RoomRepository;
 import com.demo.booking_cms.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,7 @@ public class SeatController {
                 .room(room)
                 .seatRow(request.getSeatRow())
                 .seatNumber(request.getSeatNumber())
-                .seatType(request.getSeatType() != null ? request.getSeatType() : "STANDARD")
+                .seatType(request.getSeatType() != null ? request.getSeatType() : SeatType.STANDARD)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(seatRepository.save(seat));
     }

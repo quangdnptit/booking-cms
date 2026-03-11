@@ -21,3 +21,5 @@ spring:
     enabled: true
     locations: classpath:db/migrations
     baseline-on-migrate: true
+    clean-disabled: false
+    clean-on-validation-error: true

@@ -1,5 +1,6 @@
 package com.demo.booking_cms.dto;
 
+import com.demo.booking_cms.enums.SeatType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +16,5 @@ public class SeatRequest {
     private UUID roomId;
     private String seatRow;
     private Integer seatNumber;
-    private String seatType;
+    private SeatType seatType;
 }

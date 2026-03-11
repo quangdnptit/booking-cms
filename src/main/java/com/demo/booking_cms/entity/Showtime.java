@@ -39,6 +39,12 @@ public class Showtime {
     @Column(name = "end_time", nullable = false)
     private Instant endTime;
 
+    @Column(name = "published_at", nullable = true)
+    private Instant publishedAt;
+
+    @Column(name = "is_published")
+    private Boolean isPublished;
+
     @Column(name = "base_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal basePrice;
 

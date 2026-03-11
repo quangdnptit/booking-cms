@@ -35,6 +35,12 @@ public class Room {
     @Column(name = "total_seats", nullable = false)
     private Integer totalSeats;
 
+    @Column(name = "total_rows", nullable = false)
+    private Integer totalRows;
+
+    @Column(name = "seats_per_row", nullable = false)
+    private Integer seatsPerRow;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

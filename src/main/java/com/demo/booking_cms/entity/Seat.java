@@ -1,5 +1,6 @@
 package com.demo.booking_cms.entity;
 
+import com.demo.booking_cms.enums.SeatType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,7 +36,8 @@ public class Seat {
 
     @Column(name = "seat_type", nullable = false, length = 20)
     @Builder.Default
-    private String seatType = "STANDARD";
+    @Enumerated(EnumType.STRING)
+    private SeatType seatType = SeatType.STANDARD;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
