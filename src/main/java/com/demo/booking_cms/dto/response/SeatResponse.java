@@ -20,5 +20,7 @@ public class SeatResponse {
     private String seatRow;
     private Integer seatNumber;
     private SeatType seatType;
+    private Boolean isActive;
     private Instant createdAt;
+    private Instant updatedAt;
 }

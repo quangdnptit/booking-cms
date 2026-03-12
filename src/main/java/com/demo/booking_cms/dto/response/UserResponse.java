@@ -18,4 +18,5 @@ public class UserResponse {
     private String email;
     private String role;
     private Instant createdAt;
+    private Instant updatedAt;
 }

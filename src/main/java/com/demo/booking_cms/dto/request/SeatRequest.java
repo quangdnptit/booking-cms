@@ -17,4 +17,5 @@ public class SeatRequest {
     private String seatRow;
     private Integer seatNumber;
     private SeatType seatType;
+    private Boolean isActive;
 }

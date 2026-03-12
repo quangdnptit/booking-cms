@@ -44,6 +44,9 @@ public class Room {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @JsonIgnore

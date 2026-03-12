@@ -21,4 +21,5 @@ public class RoomResponse {
     private Integer totalRows;
     private Integer seatsPerRow;
     private Instant createdAt;
+    private Instant updatedAt;
 }

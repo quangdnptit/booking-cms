@@ -17,4 +17,5 @@ public class TheaterResponse {
     private String name;
     private String location;
     private Instant createdAt;
+    private Instant updatedAt;
 }

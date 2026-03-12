@@ -36,7 +36,7 @@ public class SeatController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SeatResponse> update(@PathVariable UUID id, @RequestBody SeatRequest request) {
-        SeatResponse response = seatService.updateSeatType(id, request);
+        SeatResponse response = seatService.updateSeat(id, request);
         return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 

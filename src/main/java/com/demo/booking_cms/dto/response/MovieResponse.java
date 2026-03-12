@@ -21,4 +21,5 @@ public class MovieResponse {
     private String ageRating;
     private String posterUrl;
     private Instant createdAt;
+    private Instant updatedAt;
 }

@@ -30,6 +30,9 @@ public class Theater {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
     @OneToMany(mappedBy = "theater", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Room> rooms = new ArrayList<>();

@@ -35,10 +35,13 @@ public class SeatService {
                 .orElse(null);
     }
 
-    public SeatResponse updateSeatType(UUID id, SeatRequest request) {
+    public SeatResponse updateSeat(UUID id, SeatRequest request) {
         return seatRepository.findById(id).map(seat -> {
             if (request.getSeatType() != null) {
                 seat.setSeatType(request.getSeatType());
+            }
+            if (request.getIsActive() != null) {
+                seat.setIsActive(request.getIsActive());
             }
             return mapToResponse(seatRepository.save(seat));
         }).orElse(null);
@@ -60,7 +63,9 @@ public class SeatService {
                 .seatRow(seat.getSeatRow())
                 .seatNumber(seat.getSeatNumber())
                 .seatType(seat.getSeatType())
+                .isActive(seat.getIsActive())
                 .createdAt(seat.getCreatedAt())
+                .updatedAt(seat.getUpdatedAt())
                 .build();
     }
 }

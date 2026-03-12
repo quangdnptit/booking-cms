@@ -25,4 +25,5 @@ public class ShowtimeResponse {
     private Boolean isPublished;
     private BigDecimal basePrice;
     private Instant createdAt;
+    private Instant updatedAt;
 }
