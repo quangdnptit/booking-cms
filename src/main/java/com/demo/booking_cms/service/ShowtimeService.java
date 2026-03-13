@@ -1,16 +1,19 @@
 package com.demo.booking_cms.service;
 
+import com.demo.booking_cms.dto.request.GenerateSeatsRequest;
+import com.demo.booking_cms.dto.request.GenerateSeatsRequestWrapper;
 import com.demo.booking_cms.dto.request.ShowtimeRequest;
 import com.demo.booking_cms.dto.response.ShowtimeResponse;
-import com.demo.booking_cms.entity.Movie;
-import com.demo.booking_cms.entity.Room;
-import com.demo.booking_cms.entity.Showtime;
+import com.demo.booking_cms.entity.*;
+import com.demo.booking_cms.gateway.GoBookingClient;
 import com.demo.booking_cms.repository.MovieRepository;
 import com.demo.booking_cms.repository.RoomRepository;
+import com.demo.booking_cms.repository.SeatRepository;
 import com.demo.booking_cms.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -22,6 +25,8 @@ public class ShowtimeService {
     private final ShowtimeRepository showtimeRepository;
     private final MovieRepository movieRepository;
     private final RoomRepository roomRepository;
+    private final GoBookingClient goBookingClient;
+    private final SeatRepository seatRepository;
 
     public List<ShowtimeResponse> findAll() {
         return showtimeRepository.findAll().stream()
@@ -38,11 +43,11 @@ public class ShowtimeService {
     public ShowtimeResponse create(ShowtimeRequest request) {
         Movie movie = movieRepository.findById(request.getMovieId()).orElse(null);
         Room room = roomRepository.findById(request.getRoomId()).orElse(null);
-        
+
         if (movie == null || room == null) {
             throw new IllegalArgumentException("Movie or Room not found");
         }
-        
+
         Showtime showtime = Showtime.builder()
                 .movie(movie)
                 .room(room)
@@ -50,19 +55,22 @@ public class ShowtimeService {
                 .endTime(request.getEndTime())
                 .basePrice(request.getBasePrice())
                 .isPublished(request.isPublished())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
-                
-        return mapToResponse(showtimeRepository.save(showtime));
+        Showtime showtimeEntity = showtimeRepository.save(showtime);
+        publishShowtime(room.getId(), showtimeEntity);
+        return mapToResponse(showtimeEntity);
     }
 
     public ShowtimeResponse update(UUID id, ShowtimeRequest request) {
         Movie movie = movieRepository.findById(request.getMovieId()).orElse(null);
         Room room = roomRepository.findById(request.getRoomId()).orElse(null);
-        
+
         if (movie == null || room == null) {
             throw new IllegalArgumentException("Movie or Room not found");
         }
-        
+
         return showtimeRepository.findById(id).map(showtime -> {
             showtime.setMovie(movie);
             showtime.setRoom(room);
@@ -71,6 +79,22 @@ public class ShowtimeService {
             showtime.setBasePrice(request.getBasePrice());
             return mapToResponse(showtimeRepository.save(showtime));
         }).orElse(null);
+    }
+
+    public void publishShowtime(UUID roomId, Showtime showtime) {
+        List<Seat> seats = seatRepository.findByRoomId(roomId);
+        List<GenerateSeatsRequest> generateSeatsRequest = seats.stream().map(seatEntity -> GenerateSeatsRequest.builder()
+                .seatKey(String.format("%s#%d", seatEntity.getSeatRow(), seatEntity.getSeatNumber()))
+                .price(showtime.getBasePrice().floatValue())
+                .showtimeId(showtime.getId().toString())
+                .seatType(seatEntity.getSeatType().name())
+                .seatStatus(seatEntity.getIsActive() ? "AVAILABLE" : "UNAVAILABLE")
+                .roomId(roomId)
+                .createdAt(seatEntity.getCreatedAt().toString())
+                .updatedAt(seatEntity.getUpdatedAt().toString())
+                .build()).toList();
+
+        goBookingClient.generateSeats(new GenerateSeatsRequestWrapper(generateSeatsRequest));
     }
 
     public boolean delete(UUID id) {
