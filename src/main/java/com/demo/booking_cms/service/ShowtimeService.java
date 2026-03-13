@@ -12,9 +12,11 @@ import com.demo.booking_cms.repository.SeatRepository;
 import com.demo.booking_cms.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,7 @@ public class ShowtimeService {
                 .orElse(null);
     }
 
+    @Transactional
     public ShowtimeResponse create(ShowtimeRequest request) {
         Movie movie = movieRepository.findById(request.getMovieId()).orElse(null);
         Room room = roomRepository.findById(request.getRoomId()).orElse(null);
@@ -54,7 +57,7 @@ public class ShowtimeService {
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
                 .basePrice(request.getBasePrice())
-                .isPublished(request.isPublished())
+                .isPublished(request.getIsPublished())
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
@@ -63,6 +66,7 @@ public class ShowtimeService {
         return mapToResponse(showtimeEntity);
     }
 
+    @Transactional
     public ShowtimeResponse update(UUID id, ShowtimeRequest request) {
         Movie movie = movieRepository.findById(request.getMovieId()).orElse(null);
         Room room = roomRepository.findById(request.getRoomId()).orElse(null);
@@ -77,11 +81,19 @@ public class ShowtimeService {
             showtime.setStartTime(request.getStartTime());
             showtime.setEndTime(request.getEndTime());
             showtime.setBasePrice(request.getBasePrice());
-            return mapToResponse(showtimeRepository.save(showtime));
-        }).orElse(null);
+            showtime.setIsPublished(request.getIsPublished());
+            Showtime saved = showtimeRepository.save(showtime);
+
+            publishShowtime(room.getId(), saved);
+            return mapToResponse(saved);
+
+        }).orElseThrow(() -> new IllegalArgumentException("Showtime not found"));
     }
 
     public void publishShowtime(UUID roomId, Showtime showtime) {
+        if(!showtime.getIsPublished()) {
+            return;
+        }
         List<Seat> seats = seatRepository.findByRoomId(roomId);
         List<GenerateSeatsRequest> generateSeatsRequest = seats.stream().map(seatEntity -> GenerateSeatsRequest.builder()
                 .seatKey(String.format("%s#%d", seatEntity.getSeatRow(), seatEntity.getSeatNumber()))
