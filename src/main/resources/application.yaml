@@ -1,6 +1,5 @@
 app:
   jwt:
-    # Use a long random secret in production (min 256 bits for HS256)
     secret: ${JWT_SECRET:booking-cms-default-secret-key-min-256-bits-for-hs256}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000}
 
@@ -15,7 +14,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
 
   flyway:
     enabled: true
@@ -27,3 +26,6 @@ spring:
 go:
   api:
     base-url: http://localhost:8888/api/v1
+    jwt-secret: ${GO_BOOKING_JWT_SECRET:Py+iM0RLDoelxAJ3SZxL5L1z7jujb2WFzT6WfLp08AY=}
+    jwt-ttl-seconds: ${GO_BOOKING_JWT_TTL_SECONDS:3600}
+    jwt-subject: ${GO_BOOKING_JWT_SUB:cms-gateway}

@@ -9,16 +9,23 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class GoBookingClient {
 
     private final WebClient webClient;
+    private final GoBookingJwtService goBookingJwtService;
 
-    public GoBookingClient(@Value("${go.api.base-url}") String baseUrl) {
+    public GoBookingClient(
+            @Value("${go.api.base-url}") String baseUrl,
+            GoBookingJwtService goBookingJwtService
+    ) {
         this.webClient = WebClient.builder()
                 .baseUrl(baseUrl)
                 .build();
+        this.goBookingJwtService = goBookingJwtService;
     }
 
     public void generateSeats(GenerateSeatsRequestWrapper req) {
+        String bearer = "Bearer " + goBookingJwtService.createAccessToken();
         webClient.post()
                 .uri("/seats/generate-seats")
+                .header("Authorization", bearer)
                 .bodyValue(req)
                 .retrieve()
                 .bodyToMono(String.class)
