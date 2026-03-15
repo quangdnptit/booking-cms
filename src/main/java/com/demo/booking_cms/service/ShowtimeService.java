@@ -104,7 +104,7 @@ public class ShowtimeService {
                 .updatedAt(seatEntity.getUpdatedAt().toString())
                 .build()).toList();
 
-        goBookingClient.generateSeats(new GenerateSeatsRequestWrapper(generateSeatsRequest));
+        goBookingClient.generateSeats(new GenerateSeatsRequestWrapper(generateSeatsRequest, showtime.getBasePrice().floatValue()));
     }
 
     public boolean delete(UUID id) {
