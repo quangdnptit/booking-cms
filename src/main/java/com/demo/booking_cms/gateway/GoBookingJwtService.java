@@ -33,13 +33,14 @@ public class GoBookingJwtService {
     }
 
     /**
-     * Short-lived service token for user-booking protected routes (e.g. generate-seats).
+     * Short-lived service token for user-booking protected routes
      */
     public String createAccessToken() {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(ttlSeconds);
         return Jwts.builder()
                 .subject(subject)
+                .claim("typ", "access")
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))
                 .signWith(signingKey, Jwts.SIG.HS256)
