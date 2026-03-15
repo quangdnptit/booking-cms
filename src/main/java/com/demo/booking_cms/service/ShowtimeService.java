@@ -58,8 +58,6 @@ public class ShowtimeService {
                 .endTime(request.getEndTime())
                 .basePrice(request.getBasePrice())
                 .isPublished(request.getIsPublished())
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
                 .build();
         Showtime showtimeEntity = showtimeRepository.save(showtime);
         publishShowtime(room.getId(), showtimeEntity);

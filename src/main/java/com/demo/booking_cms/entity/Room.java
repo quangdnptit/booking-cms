@@ -3,6 +3,9 @@ package com.demo.booking_cms.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Room {
 
     @Id
@@ -41,9 +45,11 @@ public class Room {
     @Column(name = "seats_per_row", nullable = false)
     private Integer seatsPerRow;
 
+    @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
@@ -51,11 +57,4 @@ public class Room {
     @Builder.Default
     @JsonIgnore
     private List<Seat> seats = new ArrayList<>();
-
-    @PrePersist
-    protected void onCreate() {
-        if (createdAt == null) {
-            createdAt = Instant.now();
-        }
-    }
 }

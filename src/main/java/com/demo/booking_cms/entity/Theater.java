@@ -2,6 +2,9 @@ package com.demo.booking_cms.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -10,6 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "theaters")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,20 +31,15 @@ public class Theater {
     @Column(nullable = false, length = 255)
     private String location;
 
+    @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
     @OneToMany(mappedBy = "theater", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Room> rooms = new ArrayList<>();
-
-    @PrePersist
-    protected void onCreate() {
-        if (createdAt == null) {
-            createdAt = Instant.now();
-        }
-    }
 }
