@@ -29,6 +29,7 @@ public class SeatGenerationService {
                         .seatRow(String.valueOf(rowLetter))
                         .seatNumber(number)
                         .seatType(SeatType.STANDARD)
+                        .isActive(true)
                         .build();
 
                 seats.add(seat);

@@ -8,6 +8,7 @@ import com.demo.booking_cms.repository.RoomRepository;
 import com.demo.booking_cms.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +40,7 @@ public class RoomService {
                 .orElse(null);
     }
 
+    @Transactional
     public RoomResponse create(RoomRequest request) {
         Theater theater = theaterRepository.findById(request.getTheaterId()).orElse(null);
         if (theater == null) {
@@ -47,7 +49,7 @@ public class RoomService {
         if (roomRepository.existsByTheaterIdAndName(request.getTheaterId(), request.getName())) {
             throw new IllegalStateException("Room with this name already exists in this theater");
         }
-        
+
         Room room = Room.builder()
                 .theater(theater)
                 .name(request.getName())
@@ -56,7 +58,7 @@ public class RoomService {
                 .seatsPerRow(request.getSeatsPerRow())
                 .totalSeats(request.getTotalRows() * request.getSeatsPerRow())
                 .build();
-        
+
         Room savedRoom = roomRepository.save(room);
         seatGenerationService.generateSeatsForRoom(savedRoom);
         return mapToResponse(savedRoom);
