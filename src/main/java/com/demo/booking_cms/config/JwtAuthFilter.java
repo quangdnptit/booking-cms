@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.MDC;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,15 +44,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        UUID userId = jwtService.getUserIdFromToken(token);
-        SimpleGrantedAuthority role = new SimpleGrantedAuthority("ROLE_USER");
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                userId,
-                null,
-                Stream.of(role).collect(Collectors.toList())
-        );
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        filterChain.doFilter(request, response);
+        try {
+            UUID userId = jwtService.getUserIdFromToken(token);
+            MDC.put("userId", userId.toString());
+            SimpleGrantedAuthority role = new SimpleGrantedAuthority("ROLE_USER");
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userId,
+                    null,
+                    Stream.of(role).collect(Collectors.toList())
+            );
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            filterChain.doFilter(request, response);
+        } catch (Exception ex) {
+            MDC.clear();
+        }
     }
 }

@@ -5,6 +5,8 @@ import com.demo.booking_cms.dto.response.MovieResponse;
 import com.demo.booking_cms.entity.Movie;
 import com.demo.booking_cms.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,14 +18,19 @@ import java.util.stream.Collectors;
 public class MovieService {
 
     private final MovieRepository movieRepository;
+    private static final Logger log = LoggerFactory.getLogger(MovieService.class);
 
     public List<MovieResponse> findAll() {
+        log.info("find all movie");
         return movieRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
     public MovieResponse findById(UUID id) {
+        log.atInfo()
+                .addKeyValue("movieID", id)
+                .log("find by id");
         return movieRepository.findById(id)
                 .map(this::mapToResponse)
                 .orElse(null);
