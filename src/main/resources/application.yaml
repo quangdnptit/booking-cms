@@ -55,8 +55,11 @@ management:
     tags:
       application: ${spring.application.name}
   tracing:
+    enabled: true
     sampling:
       probability: 1.0
-  zipkin:
+  # Traces → Jaeger (or any OTLP backend) via HTTP/protobuf.
+  # Default matches Jaeger all-in-one OTLP HTTP (see docker-compose.jaeger.yml).
+  otlp:
     tracing:
-      endpoint: http://host.docker.internal:9411/api/v2/spans
+      endpoint: http://localhost:4318/v1/traces
